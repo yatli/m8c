@@ -26,6 +26,7 @@ config_params_s init_config() {
   c.init_use_gpu = 1;    // default to use hardware acceleration
   c.idle_ms = 10;        // default to high performance
   c.wait_for_device = 0; // default to exit if device disconnected
+  c.borderless = 0;
 
   c.key_up = SDL_SCANCODE_UP;
   c.key_left = SDL_SCANCODE_LEFT;
@@ -188,9 +189,6 @@ void read_config(config_params_s *conf) {
 
   // Frees the mem used for the config
   ini_free(ini);
-
-  // Write any new default options after loading
-  write_config(conf);
 }
 
 void read_graphics_config(ini_t *ini, config_params_s *conf) {
@@ -198,6 +196,7 @@ void read_graphics_config(ini_t *ini, config_params_s *conf) {
   const char *param_gpu = ini_get(ini, "graphics", "use_gpu");
   const char *idle_ms = ini_get(ini, "graphics", "idle_ms");
   const char *param_wait = ini_get(ini, "graphics", "wait_for_device");
+  const char *param_borderless = ini_get(ini, "graphics", "borderless");
 
   if (strcmpci(param_fs, "true") == 0) {
     conf->init_fullscreen = 1;
@@ -219,6 +218,14 @@ void read_graphics_config(ini_t *ini, config_params_s *conf) {
       conf->wait_for_device = 1;
     } else {
       conf->wait_for_device = 0;
+    }
+  }
+
+  if(param_borderless != NULL) {
+    if (strcmpci(param_borderless, "true") == 0) {
+      conf->borderless = 1;
+    } else {
+      conf->borderless = 0;
     }
   }
 }

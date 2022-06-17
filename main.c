@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
   }
 
   // initialize all SDL systems
-  if (initialize_sdl(conf.init_fullscreen, conf.init_use_gpu) == -1)
+  if (initialize_sdl(conf.init_fullscreen, conf.init_use_gpu, conf.borderless) == -1)
     run = QUIT;
 
   // initial scan for (existing) game controllers

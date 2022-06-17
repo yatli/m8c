@@ -23,12 +23,17 @@ uint8_t fullscreen = 0;
 
 static uint8_t dirty = 0;
 
+static SDL_DisplayMode DM;
+
+static int borderless;
+
 // Initializes SDL and creates a renderer and required surfaces
-int initialize_sdl(int init_fullscreen, int init_use_gpu) {
+int initialize_sdl(int init_fullscreen, int init_use_gpu, int _borderless) {
   //ticks = SDL_GetTicks();
 
   const int window_width = 640;  // SDL window width
   const int window_height = 480; // SDL window height
+  borderless = _borderless;
 
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
     SDL_LogCritical(SDL_LOG_CATEGORY_ERROR, "SDL_Init: %s\n", SDL_GetError());
@@ -37,10 +42,32 @@ int initialize_sdl(int init_fullscreen, int init_use_gpu) {
   // SDL documentation recommends this
   atexit(SDL_Quit);
 
+  SDL_GetCurrentDisplayMode(0, &DM);
   win = SDL_CreateWindow("m8c", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                          window_width, window_height,
                          SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL |
                              SDL_WINDOW_RESIZABLE | init_fullscreen);
+
+  SDL_SetWindowBordered(win, !borderless);
+
+  if (borderless) {
+    int win_x, win_y;
+    SDL_GetWindowPosition(win, &win_x, &win_y);
+    if (win_x < 0) {
+      win_x = 0;
+    } else if (win_x + window_width >= DM.w) {
+      win_x = DM.w - window_width;
+    }
+
+    if (win_y < 0) {
+      win_y = 0;
+    } else if (win_y + window_height >= DM.h) {
+      win_y = DM.h - window_height;
+    }
+
+    SDL_SetWindowSize(win, window_width, window_height);
+    SDL_SetWindowPosition(win, win_x, win_y);
+  }
 
   rend = SDL_CreateRenderer(
       win, -1, init_use_gpu ? SDL_RENDERER_ACCELERATED : SDL_RENDERER_SOFTWARE);
