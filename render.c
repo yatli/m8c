@@ -249,7 +249,7 @@ void render_screen() {
     dirty = 0;
     //ticks = SDL_GetTicks();
     SDL_SetRenderTarget(rend, NULL);
-    SDL_SetRenderDrawColor(rend, 0, 0, 0, 0);
+    SDL_SetRenderDrawColor(rend, background_color.r, background_color.g, background_color.b, background_color.a);
     SDL_RenderClear(rend);
     SDL_RenderCopy(rend, maintexture, NULL, NULL);
     SDL_RenderPresent(rend);
